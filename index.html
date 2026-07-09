@@ -1,0 +1,3109 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SinistresPro - Gestion Enterprise</title>
+
+    <!-- ===== CDN ===== -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* ==========================================================
+           STYLES COMPLETS
+           ========================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #eef2ff;
+            --primary-gradient: linear-gradient(135deg, #6366f1, #4f46e5, #8b5cf6);
+            --secondary: #64748b;
+            --success: #22c55e;
+            --success-gradient: linear-gradient(135deg, #22c55e, #16a34a);
+            --warning: #f59e0b;
+            --warning-gradient: linear-gradient(135deg, #f59e0b, #d97706);
+            --danger: #ef4444;
+            --danger-gradient: linear-gradient(135deg, #ef4444, #dc2626);
+            --purple: #8b5cf6;
+            --purple-gradient: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            --pink: #ec4899;
+            --pink-gradient: linear-gradient(135deg, #ec4899, #db2777);
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+            --text-secondary: #64748b;
+            --text-light: #94a3b8;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.08);
+            --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.12);
+            --shadow-2xl: 0 30px 80px rgba(0, 0, 0, 0.15);
+            --shadow-primary: 0 4px 16px rgba(99, 102, 241, 0.35);
+            --radius: 20px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+            --radius-xs: 6px;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --sidebar-width: 270px;
+        }
+
+        [data-theme="dark"] {
+            --bg: #0c0e1a;
+            --card-bg: #1a1d2e;
+            --text: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-light: #64748b;
+            --border: #2d3154;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.6);
+            --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.7);
+            --shadow-2xl: 0 30px 80px rgba(0, 0, 0, 0.8);
+            --shadow-primary: 0 4px 16px rgba(99, 102, 241, 0.2);
+            --primary-light: #1e1b4b;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            transition: var(--transition);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-gradient);
+            border-radius: 10px;
+        }
+
+        /* ==========================================================
+           PARTICULES
+           ========================================================== */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.05;
+            animation: floatParticle 20s infinite ease-in-out;
+        }
+        @keyframes floatParticle {
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg) scale(1);
+            }
+            50% {
+                transform: translateY(-200px) rotate(180deg) scale(0.5);
+            }
+        }
+
+        /* ==========================================================
+           AUTHENTIFICATION
+           ========================================================== */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: var(--bg);
+            padding: 1rem;
+            position: relative;
+            z-index: 10;
+        }
+        .auth-box {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 3rem;
+            max-width: 440px;
+            width: 100%;
+            box-shadow: var(--shadow-2xl);
+            border: 1px solid var(--border);
+            animation: fadeSlideUp 0.6s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .auth-box::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--primary-gradient);
+            border-radius: var(--radius);
+            z-index: -1;
+            opacity: 0.1;
+        }
+        .auth-box .auth-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .auth-box .auth-logo .logo-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--primary-gradient);
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            box-shadow: var(--shadow-primary);
+            margin-bottom: 0.8rem;
+            animation: pulseGlow 3s infinite;
+        }
+        @keyframes pulseGlow {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(99, 102, 241, 0.6);
+            }
+        }
+        .auth-box .auth-logo h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+        .auth-box .auth-logo h1 span {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .auth-box .auth-logo p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        .auth-box .form-group {
+            margin-bottom: 1.2rem;
+        }
+        .auth-box .form-group label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: block;
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .auth-box .form-group input,
+        .auth-box .form-group select {
+            width: 100%;
+            padding: 0.7rem 0.9rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            background: var(--bg);
+            color: var(--text);
+            transition: var(--transition);
+        }
+        .auth-box .form-group input:focus,
+        .auth-box .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+        }
+        .auth-box .btn {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+        }
+        .auth-box .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: var(--shadow-primary);
+        }
+        .auth-box .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.45);
+        }
+        .auth-box .auth-switch {
+            text-align: center;
+            margin-top: 1.2rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .auth-box .auth-switch a {
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .auth-box .auth-switch a:hover {
+            text-decoration: underline;
+        }
+        .auth-box .auth-error {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 0.6rem 0.9rem;
+            border-radius: var(--radius-xs);
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+            display: none;
+            border-left: 4px solid #dc2626;
+        }
+        .auth-box .auth-error.show {
+            display: block;
+            animation: shake 0.5s ease;
+        }
+        @keyframes shake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-10px);
+            }
+            75% {
+                transform: translateX(10px);
+            }
+        }
+
+        /* ==========================================================
+           APPLICATION
+           ========================================================== */
+        .app-container {
+            display: none;
+            min-height: 100vh;
+        }
+        .app-container.active {
+            display: flex;
+        }
+
+        /* ==========================================================
+           SIDEBAR
+           ========================================================== */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            z-index: 1000;
+            overflow-y: auto;
+            box-shadow: var(--shadow-md);
+        }
+        .sidebar-header {
+            padding: 1.5rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--primary-gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: var(--shadow-primary);
+        }
+        .logo-text .logo-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+        .logo-text .logo-title span {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .logo-text .logo-sub {
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            display: block;
+        }
+        .sidebar-nav {
+            flex: 1;
+            padding: 1rem 0.8rem;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.65rem 1rem;
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            margin-bottom: 0.2rem;
+        }
+        .nav-item:hover {
+            background: var(--bg);
+            color: var(--text);
+            transform: translateX(4px);
+        }
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 28px;
+            background: var(--primary-gradient);
+            border-radius: 0 4px 4px 0;
+        }
+        .nav-item i {
+            width: 20px;
+            font-size: 1rem;
+            text-align: center;
+        }
+        .nav-item .nav-badge {
+            margin-left: auto;
+            background: var(--primary-gradient);
+            color: white;
+            font-size: 0.55rem;
+            padding: 0.1rem 0.6rem;
+            border-radius: 50px;
+            font-weight: 700;
+            min-width: 20px;
+            text-align: center;
+        }
+        .sidebar-footer {
+            padding: 1rem 1.2rem;
+            border-top: 1px solid var(--border);
+        }
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.5rem 0.8rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        .theme-toggle:hover {
+            background: var(--bg);
+            color: var(--text);
+            transform: translateX(4px);
+        }
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-top: 0.8rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: var(--radius-sm);
+            background: var(--bg);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        .sidebar-user:hover {
+            border-color: var(--primary);
+        }
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            box-shadow: var(--shadow-primary);
+        }
+        .user-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: block;
+            color: var(--text);
+        }
+        .user-role {
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .user-logout {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: var(--radius-xs);
+            transition: var(--transition);
+        }
+        .user-logout:hover {
+            background: #fee2e2;
+            color: var(--danger);
+            transform: scale(1.1);
+        }
+        .nav-item.hidden {
+            display: none !important;
+        }
+
+        /* ==========================================================
+           MAIN CONTENT
+           ========================================================== */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 1.5rem 2rem;
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--text);
+            cursor: pointer;
+            padding: 0.3rem;
+        }
+        .page-title h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+        .page-title h1 span {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .page-title .page-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            display: block;
+        }
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .topbar-date {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .topbar-time {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            background: var(--bg);
+            padding: 0.3rem 0.9rem;
+            border-radius: var(--radius-xs);
+            border: 1px solid var(--border);
+        }
+
+        /* ==========================================================
+           PAGE CONTENT
+           ========================================================== */
+        .page-content {
+            display: none;
+            animation: fadeSlideUp 0.5s ease;
+        }
+        .page-content.active {
+            display: block;
+        }
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* ==========================================================
+           STATS
+           ========================================================== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.2rem 1.5rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+        .stat-card:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: var(--shadow-lg);
+        }
+        .stat-card .stat-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: white;
+            margin-bottom: 0.6rem;
+        }
+        .stat-card .stat-icon.blue {
+            background: var(--primary-gradient);
+        }
+        .stat-card .stat-icon.yellow {
+            background: var(--warning-gradient);
+        }
+        .stat-card .stat-icon.green {
+            background: var(--success-gradient);
+        }
+        .stat-card .stat-icon.purple {
+            background: var(--purple-gradient);
+        }
+        .stat-card .stat-info h4 {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+        }
+        .stat-card .stat-info p {
+            font-size: 1.8rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin: 0.1rem 0;
+        }
+        .stat-trend {
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .stat-trend.up {
+            color: var(--success);
+        }
+        .stat-trend.down {
+            color: var(--danger);
+        }
+
+        /* ==========================================================
+           CHARTS
+           ========================================================== */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .chart-card {
+            background: var(--card-bg);
+            padding: 1.2rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        .chart-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+        .chart-header h3 {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .chart-header h3 i {
+            color: var(--primary);
+            margin-right: 0.5rem;
+        }
+        .chart-container {
+            height: 200px;
+            position: relative;
+        }
+
+        /* ==========================================================
+           RECENT
+           ========================================================== */
+        .recent-section {
+            background: var(--card-bg);
+            padding: 1.2rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+        .recent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+        .recent-header h3 {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .recent-header h3 i {
+            color: var(--primary);
+            margin-right: 0.5rem;
+        }
+        .recent-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0.8rem;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.4rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        .recent-item:hover {
+            background: var(--primary-light);
+            transform: translateX(4px);
+        }
+
+        /* ==========================================================
+           TABLE
+           ========================================================== */
+        .table-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .toolbar-count {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .toolbar-filters {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .toolbar-filters select,
+        .toolbar-filters input {
+            padding: 0.3rem 0.6rem;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-xs);
+            font-size: 0.8rem;
+            background: var(--bg);
+            color: var(--text);
+            transition: var(--transition);
+        }
+        .toolbar-filters select:focus,
+        .toolbar-filters input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+        .toolbar-right {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+        thead {
+            background: var(--bg);
+            border-bottom: 2px solid var(--border);
+        }
+        th {
+            padding: 0.7rem 1rem;
+            text-align: left;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-secondary);
+            border-bottom: 2px solid var(--border);
+            cursor: pointer;
+        }
+        th:hover {
+            color: var(--primary);
+        }
+        td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+        tr:hover td {
+            background: var(--bg);
+        }
+        .empty-text {
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 2.5rem !important;
+        }
+
+        /* ==========================================================
+           PAGINATION
+           ========================================================== */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.8rem;
+            margin-top: 1.2rem;
+            flex-wrap: wrap;
+        }
+        .page-btn {
+            padding: 0.3rem 0.8rem;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-xs);
+            background: var(--card-bg);
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+        .page-btn:hover:not(:disabled) {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: var(--shadow-primary);
+            transform: translateY(-2px);
+        }
+        .page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .page-info {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .page-size-select {
+            padding: 0.2rem 0.4rem;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-xs);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 0.8rem;
+        }
+
+        /* ==========================================================
+           STATUS
+           ========================================================== */
+        .status-badge {
+            padding: 0.2rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .status-en-cours {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .status-cloture {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+        .status-en-attente {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        .status-refuse {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        [data-theme="dark"] .status-en-cours {
+            background: #1e3a5f;
+            color: #60a5fa;
+        }
+        [data-theme="dark"] .status-cloture {
+            background: #1a3a2a;
+            color: #4ade80;
+        }
+        [data-theme="dark"] .status-en-attente {
+            background: #3a2a1a;
+            color: #fbbf24;
+        }
+        [data-theme="dark"] .status-refuse {
+            background: #3a1a1a;
+            color: #f87171;
+        }
+
+        /* ==========================================================
+           ACTIONS
+           ========================================================== */
+        .btn-actions {
+            display: flex;
+            gap: 0.4rem;
+        }
+        .btn-action {
+            padding: 0.25rem 0.5rem;
+            border: none;
+            border-radius: var(--radius-xs);
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: var(--transition);
+        }
+        .btn-action.view {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        .btn-action.view:hover {
+            transform: scale(1.15);
+        }
+        .btn-action.edit {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        .btn-action.edit:hover {
+            transform: scale(1.15);
+        }
+        .btn-action.delete {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+        .btn-action.delete:hover {
+            transform: scale(1.15);
+        }
+
+        /* ==========================================================
+           BUTTONS
+           ========================================================== */
+        .btn {
+            padding: 0.55rem 1.5rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: inherit;
+        }
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: var(--shadow-primary);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.45);
+        }
+        .btn-secondary {
+            background: var(--bg);
+            color: var(--text-secondary);
+            border: 1.5px solid var(--border);
+        }
+        .btn-secondary:hover {
+            background: var(--border);
+            color: var(--text);
+            transform: translateY(-2px);
+        }
+        .btn-sm {
+            padding: 0.3rem 0.8rem;
+            font-size: 0.75rem;
+        }
+        .btn-refresh {
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            padding: 0.3rem 0.8rem;
+            border-radius: var(--radius-xs);
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+        .btn-refresh:hover {
+            background: var(--border);
+            color: var(--text);
+            transform: rotate(180deg);
+        }
+
+        /* ==========================================================
+           FORM
+           ========================================================== */
+        .form-section {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+        .form-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.2rem;
+        }
+        .form-header i {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+        .form-header h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .badge-new {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 0.15rem 0.7rem;
+            border-radius: 50px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            margin-left: auto;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            animation: pulseGlow 2s infinite;
+        }
+        .form-accordion {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.8rem;
+            overflow: hidden;
+        }
+        .accordion-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem 1rem;
+            background: var(--bg);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        .accordion-header:hover {
+            background: var(--primary-light);
+        }
+        .accordion-header i {
+            color: var(--primary);
+            transition: var(--transition);
+        }
+        .accordion-header .accordion-badge {
+            margin-left: auto;
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: var(--bg);
+            padding: 0.1rem 0.6rem;
+            border-radius: 50px;
+        }
+        .accordion-body {
+            padding: 1rem;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+        .form-group label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .form-group label i {
+            font-size: 0.7rem;
+            color: var(--primary);
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.5rem 0.8rem;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-family: inherit;
+            background: var(--bg);
+            color: var(--text);
+            transition: var(--transition);
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+            background: var(--card-bg);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        .form-actions {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1.2rem;
+            flex-wrap: wrap;
+        }
+
+        /* ==========================================================
+           SEARCH
+           ========================================================== */
+        .search-section {
+            background: var(--card-bg);
+            padding: 1.2rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+        .search-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+        .search-header i {
+            color: var(--primary);
+        }
+        .search-header h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+        .search-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+        .search-actions {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .search-results {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+        .search-empty {
+            color: var(--text-secondary);
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        /* ==========================================================
+           TOAST
+           ========================================================== */
+        #toastContainer {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .toast {
+            padding: 0.8rem 1.4rem;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            box-shadow: var(--shadow-xl);
+            animation: slideRightPremium 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 220px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .toast.success {
+            background: var(--success-gradient);
+        }
+        .toast.error {
+            background: var(--danger-gradient);
+        }
+        .toast.warning {
+            background: var(--warning-gradient);
+        }
+        @keyframes slideRightPremium {
+            from {
+                transform: translateX(100%) scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* ==========================================================
+           MODAL
+           ========================================================== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        .modal-overlay.open {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            max-width: 720px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-2xl);
+            animation: modalSlideUpPremium 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border);
+        }
+        @keyframes modalSlideUpPremium {
+            from {
+                transform: translateY(30px) scale(0.95);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: var(--card-bg);
+            border-radius: var(--radius) var(--radius) 0 0;
+            z-index: 1;
+        }
+        .detail-header h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+        .modal-close:hover {
+            color: var(--text);
+            transform: rotate(90deg) scale(1.1);
+        }
+        .detail-body {
+            padding: 1.5rem;
+        }
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+        .detail-value {
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        .detail-actions {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1.2rem;
+            justify-content: flex-end;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ==========================================================
+           RESPONSIVE
+           ========================================================== */
+        @media (max-width: 1200px) {
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .topbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+            }
+            .topbar-right {
+                justify-content: space-between;
+            }
+            .auth-box {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+            .detail-item {
+                flex-direction: column;
+                gap: 0.2rem;
+            }
+            .detail-actions {
+                flex-direction: column;
+            }
+            .detail-actions .btn {
+                justify-content: center;
+            }
+            .table-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .toolbar-left {
+                flex-wrap: wrap;
+            }
+            .toolbar-filters {
+                flex-wrap: wrap;
+            }
+        }
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .search-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-actions {
+                flex-direction: column;
+            }
+            .btn {
+                justify-content: center;
+            }
+            .page-title h1 {
+                font-size: 1.1rem;
+            }
+            .modal-content {
+                margin: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========================================================== -->
+    <!-- PARTICULES -->
+    <!-- ========================================================== -->
+    <div class="particles" id="particles"></div>
+
+    <!-- ========================================================== -->
+    <!-- AUTHENTIFICATION -->
+    <!-- ========================================================== -->
+    <div class="auth-container" id="authContainer">
+        <div class="auth-box" id="authBox">
+            <div class="auth-logo">
+                <div class="logo-icon"><i class="fas fa-car-crash"></i></div>
+                <h1>Sinistres<span>Pro</span></h1>
+                <p>Gestion des sinistres automobile</p>
+            </div>
+
+            <div class="auth-error" id="authError"></div>
+
+            <!-- Login -->
+            <div id="loginForm">
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="loginEmail" placeholder="admin@sinistres.com" value="admin@sinistres.com" />
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Mot de passe</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" value="admin123" />
+                </div>
+                <button class="btn btn-primary" onclick="login()">
+                    <i class="fas fa-sign-in-alt"></i> Se connecter
+                </button>
+                <div class="auth-switch">
+                    Pas de compte ? <a onclick="showRegister()">S'inscrire</a>
+                </div>
+            </div>
+
+            <!-- Register -->
+            <div id="registerForm" style="display:none;">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Nom complet</label>
+                    <input type="text" id="registerName" placeholder="Jean Dupont" />
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="registerEmail" placeholder="jean@email.com" />
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Mot de passe</label>
+                    <input type="password" id="registerPassword" placeholder="••••••••" />
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-user-tag"></i> Rôle</label>
+                    <select class="auth-role-select" id="registerRole" style="width:100%;padding:0.7rem 0.9rem;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:0.9rem;background:var(--bg);color:var(--text);">
+                        <option value="client">Client</option>
+                        <option value="gestionnaire">Gestionnaire</option>
+                        <option value="admin">Administrateur</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="register()">
+                    <i class="fas fa-user-plus"></i> S'inscrire
+                </button>
+                <div class="auth-switch">
+                    Déjà un compte ? <a onclick="showLogin()">Se connecter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- APPLICATION -->
+    <!-- ========================================================== -->
+    <div class="app-container" id="appContainer">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon"><i class="fas fa-car-crash"></i></div>
+                <div class="logo-text">
+                    <div class="logo-title">Sinistres<span>Pro</span></div>
+                    <div class="logo-sub">Gestion Enterprise</div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-chart-pie"></i> Tableau de bord
+                    <span class="nav-badge" id="navBadge">0</span>
+                </a>
+                <a href="#" class="nav-item" data-page="claims">
+                    <i class="fas fa-list"></i> Sinistres
+                    <span class="nav-badge" id="navClaimsBadge">0</span>
+                </a>
+                <a href="#" class="nav-item" data-page="add" id="navAdd">
+                    <i class="fas fa-plus-circle"></i> Nouveau sinistre
+                </a>
+                <a href="#" class="nav-item" data-page="search">
+                    <i class="fas fa-search"></i> Recherche
+                </a>
+                <a href="#" class="nav-item" data-page="statistics" id="navStats">
+                    <i class="fas fa-chart-bar"></i> Statistiques
+                </a>
+                <a href="#" class="nav-item" data-page="users" id="navUsers">
+                    <i class="fas fa-users"></i> Utilisateurs
+                    <span class="nav-badge" id="navUsersBadge">0</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                    <span id="themeLabel">Sombre</span>
+                </div>
+                <div class="sidebar-user">
+                    <div class="user-avatar" id="userAvatar">JD</div>
+                    <div>
+                        <div class="user-name" id="userName">Jean Dupont</div>
+                        <div class="user-role" id="userRole">Administrateur</div>
+                    </div>
+                    <button class="user-logout" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+
+            <!-- TOPBAR -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="page-title">
+                        <h1 id="pageTitle">Tableau de bord</h1>
+                        <span class="page-subtitle" id="pageSubtitle">Vue d'ensemble des sinistres</span>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <div class="topbar-time" id="currentTime">--:--</div>
+                    <div class="topbar-date" id="currentDate"></div>
+                </div>
+            </header>
+
+            <!-- DASHBOARD -->
+            <div class="page-content active" id="page-dashboard">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="fas fa-file-alt"></i></div>
+                        <div class="stat-info">
+                            <h4>Total sinistres</h4>
+                            <p id="dashTotal">0</p>
+                            <span class="stat-trend up"><i class="fas fa-arrow-up"></i> +12%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon yellow"><i class="fas fa-clock"></i></div>
+                        <div class="stat-info">
+                            <h4>En cours</h4>
+                            <p id="dashActive">0</p>
+                            <span class="stat-trend down"><i class="fas fa-arrow-down"></i> -3%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                        <div class="stat-info">
+                            <h4>Clôturés</h4>
+                            <p id="dashClosed">0</p>
+                            <span class="stat-trend up"><i class="fas fa-arrow-up"></i> +8%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple"><i class="fas fa-euro-sign"></i></div>
+                        <div class="stat-info">
+                            <h4>Montant total</h4>
+                            <p id="dashAmount">0.00 €</p>
+                            <span class="stat-trend up"><i class="fas fa-arrow-up"></i> +15%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-row">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-doughnut"></i> Répartition par statut</h3>
+                        </div>
+                        <div class="chart-container"><canvas id="statusChart"></canvas></div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-line"></i> Évolution mensuelle</h3>
+                        </div>
+                        <div class="chart-container"><canvas id="trendChart"></canvas></div>
+                    </div>
+                </div>
+
+                <div class="recent-section">
+                    <div class="recent-header">
+                        <h3><i class="fas fa-clock"></i> Derniers sinistres</h3>
+                        <span class="recent-count" id="recentCount">0</span>
+                    </div>
+                    <div id="recentList"></div>
+                </div>
+            </div>
+
+            <!-- CLAIMS -->
+            <div class="page-content" id="page-claims">
+                <div class="table-toolbar">
+                    <div class="toolbar-left">
+                        <span class="toolbar-count" id="claimsCount">0 sinistres</span>
+                        <div class="toolbar-filters">
+                            <select id="filterStatus" onchange="applyFilters()">
+                                <option value="">Tous statuts</option>
+                                <option value="En cours">En cours</option>
+                                <option value="Clôturé">Clôturé</option>
+                                <option value="En attente">En attente</option>
+                                <option value="Refusé">Refusé</option>
+                            </select>
+                            <input type="text" id="filterSearch" placeholder="Rechercher..." oninput="applyFilters()" />
+                        </div>
+                    </div>
+                    <div class="toolbar-right">
+                        <button class="btn btn-secondary btn-sm" onclick="exportCSV()"><i class="fas fa-file-csv"></i> CSV</button>
+                        <button class="btn btn-refresh" onclick="loadClaims()"><i class="fas fa-sync"></i></button>
+                    </div>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable('N° Dossier')">N° Dossier <i class="fas fa-sort"></i></th>
+                                <th onclick="sortTable('Gestionnaire')">Gestionnaire <i class="fas fa-sort"></i></th>
+                                <th onclick="sortTable('Assuré')">Assuré <i class="fas fa-sort"></i></th>
+                                <th onclick="sortTable('Immatriculation')">Immatriculation <i class="fas fa-sort"></i></th>
+                                <th onclick="sortTable('STATUT')">Statut <i class="fas fa-sort"></i></th>
+                                <th onclick="sortTable('Montant règlement')">Montant <i class="fas fa-sort"></i></th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="claimsBody">
+                            <tr><td colspan="7" class="empty-text">Chargement...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination">
+                    <button class="page-btn" onclick="prevPage()"><i class="fas fa-chevron-left"></i></button>
+                    <span class="page-info" id="pageInfo">Page 1 / 1</span>
+                    <button class="page-btn" onclick="nextPage()"><i class="fas fa-chevron-right"></i></button>
+                    <select class="page-size-select" onchange="changePageSize(this.value)">
+                        <option value="10">10</option>
+                        <option value="25" selected>25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- ADD -->
+            <div class="page-content" id="page-add">
+                <div class="form-section">
+                    <div class="form-header">
+                        <i class="fas fa-plus-circle"></i>
+                        <h2>Nouveau sinistre</h2>
+                        <span class="badge-new">Nouveau</span>
+                    </div>
+                    <form id="addForm">
+                        <div id="formContainer"></div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- SEARCH -->
+            <div class="page-content" id="page-search">
+                <div class="search-section">
+                    <div class="search-header">
+                        <i class="fas fa-search"></i>
+                        <h3>Recherche avancée</h3>
+                    </div>
+                    <div class="search-grid">
+                        <div class="form-group">
+                            <label>N° Dossier</label>
+                            <input type="text" id="sDossier" placeholder="2024-001" />
+                        </div>
+                        <div class="form-group">
+                            <label>Assuré</label>
+                            <input type="text" id="sAssure" placeholder="Jean Dupont" />
+                        </div>
+                        <div class="form-group">
+                            <label>Immatriculation</label>
+                            <input type="text" id="sImmat" placeholder="AB-123-CD" />
+                        </div>
+                        <div class="form-group">
+                            <label>STATUT</label>
+                            <select id="sStatut">
+                                <option value="">Tous</option>
+                                <option value="En cours">En cours</option>
+                                <option value="Clôturé">Clôturé</option>
+                                <option value="En attente">En attente</option>
+                                <option value="Refusé">Refusé</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Gestionnaire</label>
+                            <input type="text" id="sGestionnaire" placeholder="DUPONT" />
+                        </div>
+                    </div>
+                    <div class="search-actions">
+                        <button onclick="doSearch()" class="btn btn-primary"><i class="fas fa-search"></i> Rechercher</button>
+                        <button onclick="clearSearch()" class="btn btn-secondary"><i class="fas fa-undo"></i> Effacer</button>
+                    </div>
+                    <div class="search-results" id="searchResults">
+                        <p class="search-empty">Entrez des critères et cliquez sur "Rechercher"</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STATISTICS -->
+            <div class="page-content" id="page-statistics">
+                <div class="charts-row" style="grid-template-columns:1fr 1fr;">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-user-md"></i> Sinistres par expert</h3>
+                        </div>
+                        <div class="chart-container"><canvas id="expertChart"></canvas></div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-shield-alt"></i> Sinistres par garantie</h3>
+                        </div>
+                        <div class="chart-container"><canvas id="garantieChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- USERS (Admin only) -->
+            <div class="page-content" id="page-users">
+                <div class="form-section">
+                    <div class="form-header">
+                        <i class="fas fa-users"></i>
+                        <h2>Gestion des utilisateurs</h2>
+                        <span class="badge-new">Admin</span>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nom</th>
+                                    <th>Email</th>
+                                    <th>Rôle</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersBody">
+                                <tr><td colspan="5" class="empty-text">Chargement...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- MODAL -->
+    <!-- ========================================================== -->
+    <div class="modal-overlay" id="detailModal"></div>
+
+    <!-- ========================================================== -->
+    <!-- TOAST -->
+    <!-- ========================================================== -->
+    <div id="toastContainer"></div>
+
+    <!-- ========================================================== -->
+    <!-- JAVASCRIPT COMPLET -->
+    <!-- ========================================================== -->
+    <script>
+        // ==========================================================
+        // PARTICULES
+        // ==========================================================
+        (function createParticles() {
+            const container = document.getElementById('particles');
+            const colors = ['#6366f1', '#8b5cf6', '#ec4899', '#06b6d4', '#22c55e'];
+            for (let i = 0; i < 30; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                const size = Math.random() * 40 + 10;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.top = Math.random() * 100 + '%';
+                p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                p.style.animationDuration = (Math.random() * 20 + 15) + 's';
+                p.style.animationDelay = (Math.random() * 10) + 's';
+                container.appendChild(p);
+            }
+        })();
+
+        // ==========================================================
+        // AUTHENTIFICATION
+        // ==========================================================
+        let currentUser = null;
+        let users = [];
+
+        function loadUsers() {
+            const data = localStorage.getItem('sinistres_users');
+            if (data) {
+                users = JSON.parse(data);
+            } else {
+                users = [
+                    { id: 1, name: 'Jean Dupont', email: 'admin@sinistres.com', password: 'admin123', role: 'admin' },
+                    { id: 2, name: 'Marie Martin', email: 'gestionnaire@sinistres.com', password: 'gest123',
+                    role: 'gestionnaire' },
+                    { id: 3, name: 'Pierre Client', email: 'client@sinistres.com', password: 'client123', role: 'client' }
+                ];
+                saveUsers();
+            }
+        }
+
+        function saveUsers() {
+            localStorage.setItem('sinistres_users', JSON.stringify(users));
+        }
+
+        function showRegister() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+            document.getElementById('authError').className = 'auth-error';
+        }
+
+        function showLogin() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('authError').className = 'auth-error';
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('authError');
+            el.textContent = msg;
+            el.className = 'auth-error show';
+        }
+
+        function register() {
+            const name = document.getElementById('registerName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value.trim();
+            const role = document.getElementById('registerRole').value;
+
+            if (!name || !email || !password) { showError('Veuillez remplir tous les champs'); return; }
+            if (users.find(u => u.email === email)) { showError('Cet email est déjà utilisé'); return; }
+
+            const newUser = { id: users.length + 1, name, email, password, role };
+            users.push(newUser);
+            saveUsers();
+            showToast('✅ Compte créé avec succès ! Connectez-vous.', 'success');
+            showLogin();
+            document.getElementById('loginEmail').value = email;
+        }
+
+        function login() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+
+            if (!email || !password) { showError('Veuillez entrer votre email et mot de passe'); return; }
+
+            const user = users.find(u => u.email === email && u.password === password);
+            if (!user) { showError('Email ou mot de passe incorrect'); return; }
+
+            currentUser = user;
+            localStorage.setItem('sinistres_user', JSON.stringify(user));
+            showApp(user);
+            showToast('👋 Bonjour ' + user.name + ' !', 'success');
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('sinistres_user');
+            document.getElementById('appContainer').classList.remove('active');
+            document.getElementById('authContainer').style.display = 'flex';
+            showToast('👋 Déconnecté', 'warning');
+        }
+
+        function showApp(user) {
+            document.getElementById('authContainer').style.display = 'none';
+            document.getElementById('appContainer').classList.add('active');
+
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userAvatar').textContent = user.name.split(' ').map(n => n[0]).join('').substring(0, 2)
+                .toUpperCase();
+
+            const roles = { admin: 'Administrateur', gestionnaire: 'Gestionnaire', client: 'Client' };
+            document.getElementById('userRole').textContent = roles[user.role] || user.role;
+
+            // Masquer/Afficher selon le rôle
+            const isAdmin = user.role === 'admin';
+            const isStaff = user.role === 'admin' || user.role === 'gestionnaire';
+
+            document.getElementById('navAdd').style.display = isStaff ? 'flex' : 'none';
+            document.getElementById('navStats').style.display = isStaff ? 'flex' : 'none';
+            document.getElementById('navUsers').style.display = isAdmin ? 'flex' : 'none';
+
+            // Masquer la page users pour les non-admin
+            if (!isAdmin) {
+                document.querySelector('[data-page="users"]').classList.remove('active');
+            }
+
+            loadUsersTable();
+            loadClaims();
+            updateDate();
+            updateTime();
+            setInterval(updateTime, 1000);
+            setupNavigation();
+            setupForm();
+            loadTheme();
+            setupKeyboardShortcuts();
+        }
+
+        // ==========================================================
+        // INIT
+        // ==========================================================
+        loadUsers();
+
+        const savedUser = localStorage.getItem('sinistres_user');
+        if (savedUser) {
+            try {
+                const user = JSON.parse(savedUser);
+                const validUser = users.find(u => u.id === user.id);
+                if (validUser) {
+                    currentUser = validUser;
+                    showApp(validUser);
+                } else {
+                    localStorage.removeItem('sinistres_user');
+                }
+            } catch (e) {
+                localStorage.removeItem('sinistres_user');
+            }
+        }
+
+        // ==========================================================
+        // DATE & HEURE
+        // ==========================================================
+        function updateDate() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('fr-FR', options);
+        }
+
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit',
+                second: '2-digit' });
+        }
+
+        // ==========================================================
+        // THEME
+        // ==========================================================
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            const icon = document.getElementById('themeIcon');
+            const label = document.getElementById('themeLabel');
+            if (next === 'dark') {
+                icon.className = 'fas fa-sun';
+                label.textContent = 'Clair';
+            } else {
+                icon.className = 'fas fa-moon';
+                label.textContent = 'Sombre';
+            }
+        }
+
+        function loadTheme() {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+            if (theme === 'dark') {
+                document.getElementById('themeIcon').className = 'fas fa-sun';
+                document.getElementById('themeLabel').textContent = 'Clair';
+            }
+        }
+
+        // ==========================================================
+        // SIDEBAR
+        // ==========================================================
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        function setupNavigation() {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.dataset.page;
+                    if (page === 'users' && currentUser.role !== 'admin') return;
+                    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                    this.classList.add('active');
+                    document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+                    const target = document.getElementById('page-' + page);
+                    if (target) target.classList.add('active');
+                    const titles = {
+                        dashboard: ['Tableau de bord', 'Vue d\'ensemble'],
+                        claims: ['Sinistres', 'Gestion complète'],
+                        add: ['Nouveau sinistre', 'Formulaire d\'ajout'],
+                        search: ['Recherche', 'Recherche avancée'],
+                        statistics: ['Statistiques', 'Analyses et rapports'],
+                        users: ['Utilisateurs', 'Gestion des comptes']
+                    };
+                    document.getElementById('pageTitle').textContent = titles[page] ? titles[page][0] : 'Page';
+                    document.getElementById('pageSubtitle').textContent = titles[page] ? titles[page][1] : '';
+                    if (page === 'dashboard' || page === 'statistics') {
+                        setTimeout(updateCharts, 100);
+                    }
+                    document.getElementById('sidebar').classList.remove('open');
+                });
+            });
+        }
+
+        // ==========================================================
+        // KEYBOARD SHORTCUTS
+        // ==========================================================
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 's') {
+                    e.preventDefault();
+                    const btn = document.querySelector('#addForm button[type="submit"]');
+                    if (btn) btn.click();
+                }
+                if (e.ctrlKey && e.key === 'f') {
+                    e.preventDefault();
+                    document.getElementById('filterSearch').focus();
+                }
+                if (e.key === 'Escape') {
+                    document.getElementById('sidebar').classList.remove('open');
+                    document.getElementById('detailModal').classList.remove('open');
+                }
+            });
+        }
+
+        // ==========================================================
+        // DONNÉES EXEMPLE
+        // ==========================================================
+        const sampleClaims = [{
+            "Gestionnaire": "DUPONT",
+            "N° Dossier": "2024-001",
+            "N°ibs": "IBS001",
+            "Ref CIE": "CIE001",
+            "Assuré": "Jean Dupont",
+            "Police": "POL001",
+            "Garantie": "Tous risques",
+            "Immatriculation": "AB-123-CD",
+            "Expert": "Expert1",
+            "Date du sinistre": "2024-01-15",
+            "Date réception déclaration": "2024-01-16",
+            "Date ouverture sinistre": "2024-01-17",
+            "Date désignation expert": "2024-01-18",
+            "Date réception devis assuré": "2024-01-20",
+            "Date envoi devis à l'expert": "2024-01-21",
+            "Date réception Dernier Accord": "2024-01-25",
+            "Date Envoi Accord Assuré": "2024-01-26",
+            "Date d'expertise après réparation": "2024-01-28",
+            "Date réception facture de réparation": "2024-01-30",
+            "Date validation rapport d'expertise": "2024-02-01",
+            "Date règlement": "2024-02-05",
+            "Mode règlement": "Virement",
+            "Montant règlement": 1500.00,
+            "TEL": "0123456789",
+            "STATUT": "En cours",
+            "OBSERVATION": "En attente de pièces",
+            "N° Assistance": "ASS001",
+            "Bénéficiaire": "Jean Dupont"
+        }, {
+            "Gestionnaire": "MARTIN",
+            "N° Dossier": "2024-002",
+            "N°ibs": "IBS002",
+            "Ref CIE": "CIE002",
+            "Assuré": "Marie Martin",
+            "Police": "POL002",
+            "Garantie": "Tiers",
+            "Immatriculation": "EF-456-GH",
+            "Expert": "Expert2",
+            "Date du sinistre": "2024-02-20",
+            "Date réception déclaration": "2024-02-21",
+            "Date ouverture sinistre": "2024-02-22",
+            "Date désignation expert": "2024-02-23",
+            "Date réception devis assuré": "2024-02-25",
+            "Date envoi devis à l'expert": "2024-02-26",
+            "Date réception Dernier Accord": "2024-03-01",
+            "Date Envoi Accord Assuré": "2024-03-02",
+            "Date d'expertise après réparation": "2024-03-04",
+            "Date réception facture de réparation": "2024-03-06",
+            "Date validation rapport d'expertise": "2024-03-08",
+            "Date règlement": "2024-03-10",
+            "Mode règlement": "Chèque",
+            "Montant règlement": 850.00,
+            "TEL": "0987654321",
+            "STATUT": "Clôturé",
+            "OBSERVATION": "Dossier complet",
+            "N° Assistance": "ASS002",
+            "Bénéficiaire": "Marie Martin"
+        }, {
+            "Gestionnaire": "BERNARD",
+            "N° Dossier": "2024-003",
+            "N°ibs": "IBS003",
+            "Ref CIE": "CIE003",
+            "Assuré": "Pierre Bernard",
+            "Police": "POL003",
+            "Garantie": "Tous risques",
+            "Immatriculation": "IJ-789-KL",
+            "Expert": "Expert1",
+            "Date du sinistre": "2024-03-10",
+            "Date réception déclaration": "2024-03-11",
+            "Date ouverture sinistre": "2024-03-12",
+            "Date désignation expert": "2024-03-13",
+            "Date réception devis assuré": "2024-03-15",
+            "Date envoi devis à l'expert": "2024-03-16",
+            "Date réception Dernier Accord": "2024-03-20",
+            "Date Envoi Accord Assuré": "2024-03-21",
+            "Date d'expertise après réparation": "2024-03-23",
+            "Date réception facture de réparation": "2024-03-25",
+            "Date validation rapport d'expertise": "2024-03-27",
+            "Date règlement": "2024-03-30",
+            "Mode règlement": "Virement",
+            "Montant règlement": 2200.00,
+            "TEL": "0567891234",
+            "STATUT": "En attente",
+            "OBSERVATION": "Expertise en cours",
+            "N° Assistance": "ASS003",
+            "Bénéficiaire": "Pierre Bernard"
+        }];
+
+        let allClaims = [];
+        let filteredClaims = [];
+        let currentPage = 1;
+        let pageSize = 25;
+        let sortField = '';
+        let sortOrder = 'asc';
+
+        // ==========================================================
+        // API - CHARGEMENT
+        // ==========================================================
+        async function loadClaims() {
+            try {
+                const response = await fetch('http://127.0.0.1:8001/api/claims');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.length > 0) {
+                        allClaims = data;
+                    } else {
+                        allClaims = [...sampleClaims];
+                    }
+                } else {
+                    allClaims = [...sampleClaims];
+                }
+            } catch (e) {
+                allClaims = [...sampleClaims];
+                showToast('📊 Mode démo - Données d\'exemple', 'warning');
+            }
+
+            // Filtrer selon le rôle
+            filterClaimsByRole();
+            currentPage = 1;
+            renderTable();
+            updateStats();
+            updateHeader();
+            updateRecent();
+            updateCharts();
+            updateCount();
+            updateBadges();
+        }
+
+        function filterClaimsByRole() {
+            if (!currentUser) {
+                filteredClaims = [...allClaims];
+                return;
+            }
+            if (currentUser.role === 'admin') {
+                filteredClaims = [...allClaims];
+            } else if (currentUser.role === 'gestionnaire') {
+                filteredClaims = allClaims.filter(c => c.Gestionnaire === currentUser.name);
+            } else if (currentUser.role === 'client') {
+                filteredClaims = allClaims.filter(c => c.Assuré === currentUser.name);
+            }
+            // Appliquer le tri
+            if (sortField) {
+                filteredClaims.sort((a, b) => {
+                    const va = a[sortField] || '';
+                    const vb = b[sortField] || '';
+                    if (typeof va === 'number') return sortOrder === 'asc' ? va - vb : vb - va;
+                    return sortOrder === 'asc' ? va.toString().localeCompare(vb.toString()) : vb.toString().localeCompare(
+                    va.toString());
+                });
+            }
+        }
+
+        function updateBadges() {
+            const total = filteredClaims ? filteredClaims.length : 0;
+            document.getElementById('navBadge').textContent = total;
+            document.getElementById('navClaimsBadge').textContent = total;
+            document.getElementById('navUsersBadge').textContent = users.length;
+        }
+
+        function updateCount() {
+            const count = filteredClaims ? filteredClaims.length : 0;
+            document.getElementById('claimsCount').textContent = count + ' sinistres';
+            document.getElementById('recentCount').textContent = count;
+        }
+
+        // ==========================================================
+        // STATS
+        // ==========================================================
+        function updateStats() {
+            const total = filteredClaims ? filteredClaims.length : 0;
+            const active = filteredClaims ? filteredClaims.filter(c => c.STATUT === 'En cours').length : 0;
+            const closed = filteredClaims ? filteredClaims.filter(c => c.STATUT === 'Clôturé').length : 0;
+            const totalAmount = filteredClaims ? filteredClaims.reduce((sum, c) => sum + (parseFloat(c['Montant règlement']) ||
+                0), 0) : 0;
+
+            document.getElementById('dashTotal').textContent = total;
+            document.getElementById('dashActive').textContent = active;
+            document.getElementById('dashClosed').textContent = closed;
+            document.getElementById('dashAmount').textContent = totalAmount.toFixed(2) + ' €';
+            document.getElementById('navBadge').textContent = total;
+            document.getElementById('navClaimsBadge').textContent = total;
+        }
+
+        function updateHeader() {
+            const total = filteredClaims ? filteredClaims.length : 0;
+            const active = filteredClaims ? filteredClaims.filter(c => c.STATUT === 'En cours').length : 0;
+            const closed = filteredClaims ? filteredClaims.filter(c => c.STATUT === 'Clôturé').length : 0;
+            document.getElementById('hdrTotal').textContent = total;
+            document.getElementById('hdrActive').textContent = active;
+            document.getElementById('hdrClosed').textContent = closed;
+        }
+
+        // ==========================================================
+        // CHART
+        // ==========================================================
+        let statusChart = null,
+            trendChart = null,
+            expertChart = null;
+
+        function updateCharts() {
+            updateStatusChart();
+            updateTrendChart();
+            updateExpertChart();
+            updateGarantieChart();
+        }
+
+        function updateStatusChart() {
+            const ctx = document.getElementById('statusChart');
+            if (!ctx) return;
+            const counts = {};
+            filteredClaims.forEach(c => {
+                const status = c.STATUT || 'Non défini';
+                counts[status] = (counts[status] || 0) + 1;
+            });
+            const labels = Object.keys(counts);
+            const data = Object.values(counts);
+            const colors = { 'En cours': '#6366f1', 'Clôturé': '#22c55e', 'En attente': '#f59e0b', 'Refusé': '#ef4444' };
+            if (statusChart) statusChart.destroy();
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            statusChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{ data: data, backgroundColor: labels.map(l => colors[l] || '#64748b'), borderWidth: 2,
+                        borderColor: isDark ? '#1a1d2e' : '#ffffff' }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom',
+                            labels: { padding: 16, usePointStyle: true, pointStyle: 'circle', color: getComputedStyle(
+                                    document.documentElement).getPropertyValue('--text') || '#0f172a' } } },
+                    cutout: '65%' }
+            });
+        }
+
+        function updateTrendChart() {
+            const ctx = document.getElementById('trendChart');
+            if (!ctx) return;
+            const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+            const data = months.map(() => Math.floor(Math.random() * 20) + 5);
+            if (trendChart) trendChart.destroy();
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const gridColor = isDark ? '#2d3154' : '#e2e8f0';
+            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text') || '#0f172a';
+            trendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{ label: 'Sinistres', data: data, borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99,102,241,0.1)', fill: true, tension: 0.4,
+                        pointBackgroundColor: '#6366f1', pointBorderColor: '#6366f1', pointRadius: 4 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor } },
+                        x: { grid: { display: false }, ticks: { color: textColor } } } }
+            });
+        }
+
+        function updateExpertChart() {
+            const ctx = document.getElementById('expertChart');
+            if (!ctx) return;
+            const counts = {};
+            filteredClaims.forEach(c => {
+                const expert = c.Expert || 'Non assigné';
+                counts[expert] = (counts[expert] || 0) + 1;
+            });
+            const labels = Object.keys(counts);
+            const data = Object.values(counts);
+            const colors = ['#6366f1', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+            if (expertChart) expertChart.destroy();
+            expertChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{ label: 'Sinistres par expert', data: data, backgroundColor: labels.map((_, i) =>
+                            colors[i % colors.length]), borderRadius: 6 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+            });
+        }
+
+        let garantieChartInstance = null;
+
+        function updateGarantieChart() {
+            const ctx = document.getElementById('garantieChart');
+            if (!ctx) return;
+            const counts = {};
+            filteredClaims.forEach(c => {
+                const garantie = c.Garantie || 'Non spécifiée';
+                counts[garantie] = (counts[garantie] || 0) + 1;
+            });
+            const labels = Object.keys(counts);
+            const data = Object.values(counts);
+            if (garantieChartInstance) garantieChartInstance.destroy();
+            garantieChartInstance = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{ data: data, backgroundColor: ['#6366f1', '#22c55e', '#f59e0b', '#8b5cf6', '#ec4899',
+                            '#06b6d4'
+                        ] }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+            });
+        }
+
+        // ==========================================================
+        // RECENT
+        // ==========================================================
+        function updateRecent() {
+            const container = document.getElementById('recentList');
+            if (!container) return;
+            const recent = filteredClaims ? filteredClaims.slice(-8).reverse() : [];
+            if (recent.length === 0) {
+                container.innerHTML =
+                    `<div class="empty-state" style="text-align:center;padding:2rem;color:var(--text-secondary);"><i class="fas fa-inbox" style="font-size:2rem;margin-bottom:0.5rem;opacity:0.3;"></i><p>Aucun sinistre récent</p></div>`;
+                return;
+            }
+            let html = '';
+            recent.forEach(c => {
+                const statusClass = getStatusClass(c.STATUT);
+                const date = c['Date du sinistre'] || 'Date inconnue';
+                const montant = c['Montant règlement'] ? c['Montant règlement'].toFixed(2) + ' €' : '-';
+                html += `
+                    <div class="recent-item">
+                        <div><span style="font-weight:600;">${c['N° Dossier'] || '-'}</span> <span style="color:var(--text-secondary);font-size:0.8rem;margin-left:0.5rem;">${c.Assuré || '-'}</span></div>
+                        <div><span class="status-badge ${statusClass}">${c.STATUT || 'Non défini'}</span> <span style="font-size:0.7rem;color:var(--text-secondary);margin-left:0.5rem;">${date}</span> <span style="font-weight:600;margin-left:0.5rem;">${montant}</span></div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function getStatusClass(status) {
+            if (!status) return 'status-en-attente';
+            const map = { 'En cours': 'status-en-cours', 'Clôturé': 'status-cloture', 'En attente': 'status-en-attente',
+                'Refusé': 'status-refuse' };
+            return map[status] || 'status-en-attente';
+        }
+
+        // ==========================================================
+        // TABLE
+        // ==========================================================
+        function renderTable() {
+            const tbody = document.getElementById('claimsBody');
+            if (!tbody) return;
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            const pageData = filteredClaims.slice(start, end);
+
+            if (pageData.length === 0) {
+                tbody.innerHTML =
+                    `<tr><td colspan="7" class="empty-text"><div style="text-align:center;padding:1rem;"><i class="fas fa-inbox" style="font-size:2rem;display:block;margin-bottom:0.5rem;opacity:0.3;"></i>Aucun sinistre trouvé</div></td></tr>`;
+                updatePagination();
+                return;
+            }
+
+            let html = '';
+            pageData.forEach((claim) => {
+                const statusClass = getStatusClass(claim.STATUT);
+                const montant = claim['Montant règlement'] ? claim['Montant règlement'].toFixed(2) + ' €' : '-';
+                html += `
+                    <tr>
+                        <td><strong>${claim['N° Dossier'] || '-'}</strong></td>
+                        <td>${claim.Gestionnaire || '-'}</td>
+                        <td>${claim.Assuré || '-'}</td>
+                        <td>${claim.Immatriculation || '-'}</td>
+                        <td><span class="status-badge ${statusClass}">${claim.STATUT || 'Non défini'}</span></td>
+                        <td>${montant}</td>
+                        <td>
+                            <div class="btn-actions">
+                                <button class="btn-action view" onclick="showDetail('${claim['N° Dossier']}')"><i class="fas fa-eye"></i></button>
+                                ${currentUser && currentUser.role !== 'client' ? `<button class="btn-action edit" onclick="editClaim('${claim['N° Dossier']}')"><i class="fas fa-edit"></i></button>` : ''}
+                                ${currentUser && currentUser.role === 'admin' ? `<button class="btn-action delete" onclick="deleteClaim('${claim['N° Dossier']}')"><i class="fas fa-trash"></i></button>` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+            updatePagination();
+        }
+
+        // ==========================================================
+        // PAGINATION
+        // ==========================================================
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredClaims.length / pageSize) || 1;
+            document.getElementById('pageInfo').textContent = `Page ${currentPage} / ${totalPages}`;
+            const prevBtn = document.querySelector('.page-btn:first-child');
+            const nextBtn = document.querySelector('.page-btn:last-child');
+            if (prevBtn) prevBtn.disabled = currentPage <= 1;
+            if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
+        }
+
+        function prevPage() {
+            if (currentPage > 1) { currentPage--;
+                renderTable(); }
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(filteredClaims.length / pageSize) || 1;
+            if (currentPage < totalPages) { currentPage++;
+                renderTable(); }
+        }
+
+        function changePageSize(size) {
+            pageSize = parseInt(size);
+            currentPage = 1;
+            renderTable();
+        }
+
+        // ==========================================================
+        // FILTERS & SORT
+        // ==========================================================
+        function applyFilters() {
+            const status = document.getElementById('filterStatus')?.value || '';
+            const search = document.getElementById('filterSearch')?.value.toLowerCase() || '';
+            filteredClaims = allClaims.filter(c => {
+                let match = true;
+                if (status && c.STATUT !== status) match = false;
+                if (search) {
+                    const fields = [c['N° Dossier'], c.Assuré, c.Gestionnaire, c.Immatriculation];
+                    const found = fields.some(f => f && f.toLowerCase().includes(search));
+                    if (!found) match = false;
+                }
+                // Filtrer selon le rôle
+                if (currentUser) {
+                    if (currentUser.role === 'gestionnaire' && c.Gestionnaire !== currentUser.name) match = false;
+                    if (currentUser.role === 'client' && c.Assuré !== currentUser.name) match = false;
+                }
+                return match;
+            });
+            if (sortField) {
+                filteredClaims.sort((a, b) => {
+                    const va = a[sortField] || '';
+                    const vb = b[sortField] || '';
+                    if (typeof va === 'number') return sortOrder === 'asc' ? va - vb : vb - va;
+                    return sortOrder === 'asc' ? va.toString().localeCompare(vb.toString()) : vb.toString().localeCompare(
+                        va.toString());
+                });
+            }
+            currentPage = 1;
+            renderTable();
+        }
+
+        function sortTable(field) {
+            if (sortField === field) {
+                sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortField = field;
+                sortOrder = 'asc';
+            }
+            applyFilters();
+        }
+
+        // ==========================================================
+        // MODAL DETAIL
+        // ==========================================================
+        function showDetail(dossier) {
+            const claim = allClaims.find(c => c['N° Dossier'] === dossier);
+            if (!claim) { showToast('Sinistre non trouvé', 'error'); return; }
+            const modal = document.getElementById('detailModal');
+            if (!modal) return;
+
+            const fields = [
+                ['N° Dossier', 'N° Dossier'],
+                ['Gestionnaire', 'Gestionnaire'],
+                ['Assuré', 'Assuré'],
+                ['Police', 'Police'],
+                ['Garantie', 'Garantie'],
+                ['Immatriculation', 'Immatriculation'],
+                ['Expert', 'Expert'],
+                ['Date du sinistre', 'Date du sinistre'],
+                ['Date réception déclaration', 'Date réception déclaration'],
+                ['Date ouverture sinistre', 'Date ouverture sinistre'],
+                ['Date désignation expert', 'Date désignation expert'],
+                ['Date réception devis assuré', 'Date réception devis assuré'],
+                ['Date envoi devis à l\'expert', 'Date envoi devis à l\'expert'],
+                ['Date réception Dernier Accord', 'Date réception Dernier Accord'],
+                ['Date Envoi Accord Assuré', 'Date Envoi Accord Assuré'],
+                ['Date d\'expertise après réparation', 'Date d\'expertise après réparation'],
+                ['Date réception facture de réparation', 'Date réception facture de réparation'],
+                ['Date validation rapport d\'expertise', 'Date validation rapport d\'expertise'],
+                ['Date règlement', 'Date règlement'],
+                ['Mode règlement', 'Mode règlement'],
+                ['Montant règlement', 'Montant règlement'],
+                ['TEL', 'TEL'],
+                ['STATUT', 'STATUT'],
+                ['OBSERVATION', 'OBSERVATION'],
+                ['N° Assistance', 'N° Assistance'],
+                ['Bénéficiaire', 'Bénéficiaire']
+            ];
+
+            let html = `
+                <div class="modal-content">
+                    <div class="detail-header">
+                        <h3><i class="fas fa-file-alt"></i> Détail du sinistre</h3>
+                        <button class="modal-close" onclick="closeDetailModal()">&times;</button>
+                    </div>
+                    <div class="detail-body">
+            `;
+
+            fields.forEach(([label, key]) => {
+                const value = claim[key] || '-';
+                html += `
+                        <div class="detail-item">
+                            <span class="detail-label">${label}</span>
+                            <span class="detail-value">${value}</span>
+                        </div>
+                    `;
+            });
+
+            html += `
+                        <div class="detail-actions">
+                            <button class="btn btn-secondary" onclick="closeDetailModal()">Fermer</button>
+                            ${currentUser && currentUser.role !== 'client' ? `<button class="btn btn-primary" onclick="closeDetailModal();editClaim('${dossier}')"><i class="fas fa-edit"></i> Modifier</button>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            modal.innerHTML = html;
+            modal.classList.add('open');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal')?.classList.remove('open');
+        }
+
+        // ==========================================================
+        // FORMULAIRE
+        // ==========================================================
+        function setupForm() {
+            const form = document.getElementById('addForm');
+            if (!form) return;
+            const container = document.getElementById('formContainer');
+            if (!container) return;
+
+            container.innerHTML = `
+                <div class="form-accordion open">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <i class="fas fa-chevron-down"></i>
+                        <span>Informations générales</span>
+                        <span class="accordion-badge">Obligatoire</span>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-user"></i> Gestionnaire *</label>
+                                <input type="text" id="addGestionnaire" placeholder="DUPONT" required value="${currentUser ? currentUser.name : ''}" />
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-hashtag"></i> N° Dossier *</label>
+                                <input type="text" id="addDossier" placeholder="2024-001" required />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-user-circle"></i> Assuré *</label>
+                                <input type="text" id="addAssure" placeholder="Jean Dupont" required />
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-file-contract"></i> Police</label>
+                                <input type="text" id="addPolice" placeholder="POL001" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-shield-alt"></i> Garantie</label>
+                                <input type="text" id="addGarantie" placeholder="Tous risques" />
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-car"></i> Immatriculation</label>
+                                <input type="text" id="addImmat" placeholder="AB-123-CD" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-user-md"></i> Expert</label>
+                                <input type="text" id="addExpert" placeholder="Expert1" />
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-tag"></i> STATUT</label>
+                                <select id="addStatut">
+                                    <option value="En cours">En cours</option>
+                                    <option value="Clôturé">Clôturé</option>
+                                    <option value="En attente">En attente</option>
+                                    <option value="Refusé">Refusé</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-phone"></i> TEL</label>
+                                <input type="tel" id="addTel" placeholder="0123456789" />
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-hands-helping"></i> N° Assistance</label>
+                                <input type="text" id="addAssistance" placeholder="ASS001" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-user-check"></i> Bénéficiaire</label>
+                                <input type="text" id="addBeneficiaire" placeholder="Jean Dupont" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <i class="fas fa-chevron-right"></i>
+                        <span>Dates clés</span>
+                        <span class="accordion-badge">12 dates</span>
+                    </div>
+                    <div class="accordion-body" style="display:none;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Date du sinistre</label>
+                                <input type="date" id="addDateSinistre" />
+                            </div>
+                            <div class="form-group">
+                                <label>Réception déclaration</label>
+                                <input type="date" id="addDateRecepDecl" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Ouverture sinistre</label>
+                                <input type="date" id="addDateOuverture" />
+                            </div>
+                            <div class="form-group">
+                                <label>Désignation expert</label>
+                                <input type="date" id="addDateDesignExpert" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Réception devis assuré</label>
+                                <input type="date" id="addDateRecepDevis" />
+                            </div>
+                            <div class="form-group">
+                                <label>Envoi devis à l'expert</label>
+                                <input type="date" id="addDateEnvoiDevis" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Réception Dernier Accord</label>
+                                <input type="date" id="addDateRecepAccord" />
+                            </div>
+                            <div class="form-group">
+                                <label>Envoi Accord Assuré</label>
+                                <input type="date" id="addDateEnvoiAccord" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Expertise après réparation</label>
+                                <input type="date" id="addDateExpertise" />
+                            </div>
+                            <div class="form-group">
+                                <label>Réception facture réparation</label>
+                                <input type="date" id="addDateRecepFacture" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Validation rapport expertise</label>
+                                <input type="date" id="addDateValidRapport" />
+                            </div>
+                            <div class="form-group">
+                                <label>Date règlement</label>
+                                <input type="date" id="addDateReglement" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <i class="fas fa-chevron-right"></i>
+                        <span>Règlement & informations</span>
+                        <span class="accordion-badge">Optionnel</span>
+                    </div>
+                    <div class="accordion-body" style="display:none;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-hand-holding-usd"></i> Mode règlement</label>
+                                <input type="text" id="addModeReglement" placeholder="Virement / Chèque" />
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-euro-sign"></i> Montant règlement</label>
+                                <input type="number" id="addMontant" step="0.01" placeholder="1500.00" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group" style="grid-column:1/-1;">
+                                <label><i class="fas fa-comment"></i> Observation</label>
+                                <textarea id="addObservation" rows="2" placeholder="Informations complémentaires..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Ajouter le sinistre</button>
+                    <button type="reset" class="btn btn-secondary"><i class="fas fa-undo"></i> Réinitialiser</button>
+                </div>
+            `;
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                await addClaim();
+            });
+        }
+
+        function toggleAccordion(header) {
+            const body = header.nextElementSibling;
+            const icon = header.querySelector('i');
+            if (body.style.display === 'none') {
+                body.style.display = 'block';
+                icon.className = 'fas fa-chevron-down';
+            } else {
+                body.style.display = 'none';
+                icon.className = 'fas fa-chevron-right';
+            }
+        }
+
+        // ==========================================================
+        // ADD CLAIM
+        // ==========================================================
+        async function addClaim() {
+            const dossier = document.getElementById('addDossier').value.trim();
+            const gestionnaire = document.getElementById('addGestionnaire').value.trim();
+            const assure = document.getElementById('addAssure').value.trim();
+
+            if (!dossier || !gestionnaire || !assure) {
+                showToast('Veuillez remplir les champs obligatoires (*)', 'error');
+                return;
+            }
+
+            if (allClaims.some(c => c['N° Dossier'] === dossier)) {
+                showToast('Ce numéro de dossier existe déjà !', 'error');
+                return;
+            }
+
+            const newClaim = {
+                "Gestionnaire": gestionnaire,
+                "N° Dossier": dossier,
+                "N°ibs": document.getElementById('addIbs')?.value.trim() || '',
+                "Ref CIE": document.getElementById('addCie')?.value.trim() || '',
+                "Assuré": assure,
+                "Police": document.getElementById('addPolice').value.trim(),
+                "Garantie": document.getElementById('addGarantie').value.trim(),
+                "Immatriculation": document.getElementById('addImmat').value.trim(),
+                "Expert": document.getElementById('addExpert').value.trim(),
+                "Date du sinistre": document.getElementById('addDateSinistre').value,
+                "Date réception déclaration": document.getElementById('addDateRecepDecl').value,
+                "Date ouverture sinistre": document.getElementById('addDateOuverture').value,
+                "Date désignation expert": document.getElementById('addDateDesignExpert').value,
+                "Date réception devis assuré": document.getElementById('addDateRecepDevis').value,
+                "Date envoi devis à l'expert": document.getElementById('addDateEnvoiDevis').value,
+                "Date réception Dernier Accord": document.getElementById('addDateRecepAccord').value,
+                "Date Envoi Accord Assuré": document.getElementById('addDateEnvoiAccord').value,
+                "Date d'expertise après réparation": document.getElementById('addDateExpertise').value,
+                "Date réception facture de réparation": document.getElementById('addDateRecepFacture').value,
+                "Date validation rapport d'expertise": document.getElementById('addDateValidRapport').value,
+                "Date règlement": document.getElementById('addDateReglement').value,
+                "Mode règlement": document.getElementById('addModeReglement').value.trim(),
+                "Montant règlement": parseFloat(document.getElementById('addMontant').value) || 0,
+                "TEL": document.getElementById('addTel').value.trim(),
+                "STATUT": document.getElementById('addStatut').value,
+                "OBSERVATION": document.getElementById('addObservation').value.trim(),
+                "N° Assistance": document.getElementById('addAssistance').value.trim(),
+                "Bénéficiaire": document.getElementById('addBeneficiaire').value.trim()
+            };
+
+            allClaims.push(newClaim);
+            filterClaimsByRole();
+            document.getElementById('addForm').reset();
+            loadClaims();
+            showToast('✅ Sinistre ' + dossier + ' ajouté avec succès !', 'success');
+
+            try {
+                await fetch('http://127.0.0.1:8001/api/claims', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newClaim)
+                });
+            } catch (e) { console.warn('API indisponible'); }
+        }
+
+        // ==========================================================
+        // DELETE CLAIM
+        // ==========================================================
+        async function deleteClaim(dossier) {
+            if (!confirm('Supprimer le sinistre ' + dossier + ' ?')) return;
+            allClaims = allClaims.filter(c => c['N° Dossier'] !== dossier);
+            filterClaimsByRole();
+            loadClaims();
+            showToast('🗑️ Sinistre supprimé', 'success');
+            try {
+                await fetch(`http://127.0.0.1:8001/api/claims/${encodeURIComponent(dossier)}`, { method: 'DELETE' });
+            } catch (e) { console.warn('API indisponible'); }
+        }
+
+        // ==========================================================
+        // EDIT CLAIM
+        // ==========================================================
+        async function editClaim(dossier) {
+            const claim = allClaims.find(c => c['N° Dossier'] === dossier);
+            if (!claim) { showToast('Sinistre non trouvé', 'error'); return; }
+            const newStatut = prompt('Nouveau statut :\n(En cours, Clôturé, En attente, Refusé)', claim.STATUT);
+            if (newStatut && ['En cours', 'Clôturé', 'En attente', 'Refusé'].includes(newStatut)) {
+                claim.STATUT = newStatut;
+                loadClaims();
+                showToast('✅ Statut mis à jour', 'success');
+                try {
+                    await fetch(`http://127.0.0.1:8001/api/claims/${encodeURIComponent(dossier)}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(claim)
+                    });
+                } catch (e) { console.warn('API indisponible'); }
+            } else if (newStatut !== null) {
+                showToast('❌ Statut invalide', 'error');
+            }
+        }
+
+        // ==========================================================
+        // SEARCH
+        // ==========================================================
+        function doSearch() {
+            const criteria = {
+                "NumeroDossier": document.getElementById('sDossier').value.trim(),
+                "Assure": document.getElementById('sAssure').value.trim(),
+                "Immatriculation": document.getElementById('sImmat').value.trim(),
+                "STATUT": document.getElementById('sStatut').value,
+                "Gestionnaire": document.getElementById('sGestionnaire').value.trim()
+            };
+
+            const filters = {};
+            for (const [key, value] of Object.entries(criteria)) {
+                if (value && value !== "") filters[key] = value;
+            }
+
+            if (Object.keys(filters).length === 0) {
+                showToast('Veuillez saisir au moins un critère', 'warning');
+                return;
+            }
+
+            const results = allClaims.filter(c => {
+                let match = true;
+                for (const [key, value] of Object.entries(filters)) {
+                    const fieldMap = { 'NumeroDossier': 'N° Dossier', 'Assure': 'Assuré', 'Immatriculation': 'Immatriculation',
+                        'STATUT': 'STATUT', 'Gestionnaire': 'Gestionnaire' };
+                    const field = fieldMap[key] || key;
+                    if (value && !String(c[field] || '').toLowerCase().includes(String(value).toLowerCase())) {
+                        match = false;
+                        break;
+                    }
+                }
+                // Filtrer selon le rôle
+                if (currentUser) {
+                    if (currentUser.role === 'gestionnaire' && c.Gestionnaire !== currentUser.name) match = false;
+                    if (currentUser.role === 'client' && c.Assuré !== currentUser.name) match = false;
+                }
+                return match;
+            });
+
+            const container = document.getElementById('searchResults');
+            if (!container) return;
+
+            if (results.length === 0) {
+                container.innerHTML = `<p class="search-empty">Aucun résultat trouvé</p>`;
+                return;
+            }
+
+            let html = `<p class="search-count">${results.length} résultat(s) trouvé(s)</p>`;
+            html += `<div class="table-wrap"><table><thead><tr>
+                        <th>N° Dossier</th><th>Gestionnaire</th><th>Assuré</th>
+                        <th>Immatriculation</th><th>Statut</th><th>Montant</th>
+                    </tr></thead><tbody>`;
+
+            results.forEach(c => {
+                const statusClass = getStatusClass(c.STATUT);
+                const montant = c['Montant règlement'] ? c['Montant règlement'].toFixed(2) + ' €' : '-';
+                html += `<tr>
+                            <td><strong>${c['N° Dossier'] || '-'}</strong></td>
+                            <td>${c.Gestionnaire || '-'}</td>
+                            <td>${c.Assuré || '-'}</td>
+                            <td>${c.Immatriculation || '-'}</td>
+                            <td><span class="status-badge ${statusClass}">${c.STATUT || 'Non défini'}</span></td>
+                            <td>${montant}</td>
+                        </tr>`;
+            });
+
+            html += `</tbody></table></div>`;
+            container.innerHTML = html;
+        }
+
+        function clearSearch() {
+            ['sDossier', 'sAssure', 'sImmat', 'sStatut', 'sGestionnaire'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            document.getElementById('searchResults').innerHTML =
+                `<p class="search-empty">Entrez des critères et cliquez sur "Rechercher"</p>`;
+        }
+
+        // ==========================================================
+        // EXPORT
+        // ==========================================================
+        function exportCSV() {
+            if (!filteredClaims || filteredClaims.length === 0) {
+                showToast('Aucune donnée à exporter', 'warning');
+                return;
+            }
+            const headers = ['N° Dossier', 'Gestionnaire', 'Assuré', 'Immatriculation', 'STATUT', 'Montant règlement',
+                'Date du sinistre'
+            ];
+            let csv = headers.join(',') + '\n';
+            filteredClaims.forEach(c => {
+                csv += [
+                    c['N° Dossier'] || '',
+                    c.Gestionnaire || '',
+                    c.Assuré || '',
+                    c.Immatriculation || '',
+                    c.STATUT || '',
+                    c['Montant règlement'] || 0,
+                    c['Date du sinistre'] || ''
+                ].join(',') + '\n';
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'sinistres_export.csv';
+            link.click();
+            showToast('✅ Export CSV réussi !', 'success');
+        }
+
+        // ==========================================================
+        // TOAST
+        // ==========================================================
+        function showToast(message, type) {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // ==========================================================
+        // USERS TABLE (Admin only)
+        // ==========================================================
+        function loadUsersTable() {
+            const tbody = document.getElementById('usersBody');
+            if (!tbody) return;
+            if (currentUser && currentUser.role !== 'admin') {
+                tbody.innerHTML = `<tr><td colspan="5" class="empty-text">Accès réservé aux administrateurs</td></tr>`;
+                return;
+            }
+            if (users.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="empty-text">Aucun utilisateur</td></tr>`;
+                return;
+            }
+            let html = '';
+            users.forEach(u => {
+                const roleLabel = { admin: 'Administrateur', gestionnaire: 'Gestionnaire', client: 'Client' } [u
+                .role] || u.role;
+                html += `
+                    <tr>
+                        <td>${u.id}</td>
+                        <td>${u.name}</td>
+                        <td>${u.email}</td>
+                        <td><span class="status-badge" style="background:${u.role === 'admin' ? '#dbeafe' : u.role === 'gestionnaire' ? '#dcfce7' : '#fef3c7'};color:${u.role === 'admin' ? '#1d4ed8' : u.role === 'gestionnaire' ? '#16a34a' : '#d97706'};">${roleLabel}</span></td>
+                        <td>
+                            <div class="btn-actions">
+                                ${u.id !== 1 ? `<button class="btn-action delete" onclick="deleteUser(${u.id})"><i class="fas fa-trash"></i></button>` : '<span style="font-size:0.7rem;color:var(--text-secondary);">Admin principal</span>'}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+            document.getElementById('navUsersBadge').textContent = users.length;
+        }
+
+        function deleteUser(id) {
+            if (!confirm('Supprimer cet utilisateur ?')) return;
+            users = users.filter(u => u.id !== id);
+            saveUsers();
+            loadUsersTable();
+            showToast('🗑️ Utilisateur supprimé', 'success');
+        }
+
+        // ==========================================================
+        // EXPOSE GLOBAL FUNCTIONS
+        // ==========================================================
+        window.login = login;
+        window.register = register;
+        window.logout = logout;
+        window.showRegister = showRegister;
+        window.showLogin = showLogin;
+        window.toggleTheme = toggleTheme;
+        window.toggleSidebar = toggleSidebar;
+        window.loadClaims = loadClaims;
+        window.deleteClaim = deleteClaim;
+        window.editClaim = editClaim;
+        window.doSearch = doSearch;
+        window.clearSearch = clearSearch;
+        window.exportCSV = exportCSV;
+        window.sortTable = sortTable;
+        window.applyFilters = applyFilters;
+        window.prevPage = prevPage;
+        window.nextPage = nextPage;
+        window.changePageSize = changePageSize;
+        window.showDetail = showDetail;
+        window.closeDetailModal = closeDetailModal;
+        window.toggleAccordion = toggleAccordion;
+        window.deleteUser = deleteUser;
+    </script>
+
+</body>
+</html>
